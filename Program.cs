@@ -4,15 +4,26 @@
     {
         static void Main(string[] args)
         {
-            QueueNodes queue = new QueueNodes();
-            queue.Enqueue(1);
-            queue.Enqueue(2);
-            queue.Enqueue(3);
-            queue.Enqueue(4);
-            Console.WriteLine(queue.Dequeue());
-            Console.WriteLine(queue.Dequeue());
-            Console.WriteLine(queue.Dequeue());
-            Console.WriteLine(queue.Dequeue());
+            var linkedList = new LinkedList<int>();
+            linkedList.AddLast(1);
+            linkedList.AddLast(2);
+            linkedList.AddLast(3);
+            linkedList.AddFirst(4);
+            linkedList.RemoveFirst();
+            linkedList.RemoveAt(0);
+            linkedList.RemoveAt(1);
+            linkedList.AddFirst(5);
+            linkedList.AddFirst(5);
+            linkedList.AddFirst(5);
+            linkedList.AddFirst(5);
+            linkedList.AddFirst(5);
+            linkedList.RemoveFirst();
+            linkedList.RemoveAt(0);
+            linkedList.RemoveLast();
+            for (int i = 0; i < linkedList.Count; i++)
+            {
+                Console.WriteLine(linkedList.ElementAt(i).Value);
+            }
         }
 
         static int Fibonacci(int n)
@@ -22,7 +33,7 @@
             int less1 = 1;
             int less2 = 1;
             int current = 0;
-            for (int i = 0; i < n-2; i++)
+            for (int i = 0; i < n - 2; i++)
             {
                 current = less1 + less2;
                 less1 = less2;
