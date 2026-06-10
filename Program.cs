@@ -4,26 +4,14 @@
     {
         static void Main(string[] args)
         {
-            var linkedList = new LinkedList<int>();
-            linkedList.AddLast(1);
-            linkedList.AddLast(2);
-            linkedList.AddLast(3);
-            linkedList.AddFirst(4);
-            linkedList.RemoveFirst();
-            linkedList.RemoveAt(0);
-            linkedList.RemoveAt(1);
-            linkedList.AddFirst(5);
-            linkedList.AddFirst(5);
-            linkedList.AddFirst(5);
-            linkedList.AddFirst(5);
-            linkedList.AddFirst(5);
-            linkedList.RemoveFirst();
-            linkedList.RemoveAt(0);
-            linkedList.RemoveLast();
-            for (int i = 0; i < linkedList.Count; i++)
-            {
-                Console.WriteLine(linkedList.ElementAt(i).Value);
-            }
+            var tree = new BinarySearchTree<int>();
+            tree.Add(5);
+            tree.Add(6);
+            tree.Add(7);
+            tree.Add(1);
+            tree.Add(2);
+            tree.Add(3);
+
         }
 
         static int Fibonacci(int n)
@@ -40,6 +28,47 @@
                 less2 = current;
             }
             return current;
+        }
+
+        static int[] MergeSort(int[] nums)
+        {
+            if (nums.Length == 0 || nums.Length == 1) return nums;
+            if (nums.Length == 2)
+            {
+                if (nums[0] <= nums[1]) return nums;
+                return new int[] { nums[1], nums[0] };
+            }
+            var leftHalf = MergeSort(nums[..(nums.Length / 2)]);
+            var rightHalf = MergeSort(nums[(nums.Length / 2)..]);
+            int indexInLeft = 0;
+            int indexInRight = 0;
+            int[] result = new int[nums.Length];
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (indexInLeft >= leftHalf.Length)
+                {
+                    result[i] = rightHalf[indexInRight];
+                    indexInRight++;
+                    continue;
+                }
+                else if (indexInRight >= rightHalf.Length)
+                {
+                    result[i] = leftHalf[indexInLeft];
+                    indexInLeft++;
+                    continue;
+                }
+                if (leftHalf[indexInLeft] >= rightHalf[indexInRight])
+                {
+                    result[i] = rightHalf[indexInRight];
+                    indexInRight++;
+                }
+                else
+                {
+                    result[i] = leftHalf[indexInLeft];
+                    indexInLeft++;
+                }
+            }
+            return result;
         }
     }
 }
