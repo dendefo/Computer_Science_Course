@@ -4,13 +4,13 @@
     {
         static void Main(string[] args)
         {
-            var tree = new BinarySearchTree<int>();
-            tree.Add(5);
-            tree.Add(6);
-            tree.Add(7);
-            tree.Add(1);
-            tree.Add(2);
-            tree.Add(3);
+            var graph = new Graph<int>();
+            var one = graph.AddNode(1);
+            var two = graph.AddNode(2);
+            var three = graph.AddNode(3);
+            graph.AddEdge(one, two);
+            graph.AddEdge(two, three);
+            graph.AddEdge(three, one);
 
         }
 
