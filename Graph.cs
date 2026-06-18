@@ -8,58 +8,63 @@ namespace ComputerScience
 {
     public class Graph<T>
     {
-        public List<Node<T>> Nodes { get; set; }
+        public List<GraphNode<T>> Nodes { get; set; }
         public HashSet<Edge<T>> Edges { get; set; }
 
 
         public Graph()
         {
             Edges = new HashSet<Edge<T>>();
-            Nodes = new List<Node<T>>();
+            Nodes = new List<GraphNode<T>>();
         }
 
-        public Node<T> AddNode(T value, List<Node<T>> connection = null)
+        public GraphNode<T> AddNode(T value)
         {
-            var node = new Node<T>(value);
+            var node = new GraphNode<T>(value);
             Nodes.Add(node);
-            if (connection != null)
-            {
-                foreach (var conn in connection)
-                {
-                    if (conn == null) continue;
-                    Edges.Add(new Edge<T>(conn, node));
-                }
-            }
             return node;
         }
 
-        public void AddEdge(Node<T> first, Node<T> second)
+        public void AddEdgeOneDirection(GraphNode<T> first, GraphNode<T> second, float weight)
         {
-            Edges.Add(new Edge<T>(first, second));
+            var edge = new Edge<T>(first, second, weight);
+            Edges.Add(edge);
+            first.AddEdge(edge);
 
         }
-
-        public class Node<T>
+        public void AddEdgeTwoDirection(GraphNode<T> first, GraphNode<T> second, float weight)
         {
-            public T Value { get; private set; }
-            public Node(T value)
-            {
-                Value = value;
-            }
+            AddEdgeOneDirection(first, second, weight);
+            AddEdgeOneDirection(second, first, weight);
         }
-        public class Edge<T>
+
+    }
+    public class Edge<T>
+    {
+        public GraphNode<T> First { get; set; }
+        public GraphNode<T> Last { get; set; }
+        public float Weight { get; private set; }
+        public Edge(GraphNode<T> first, GraphNode<T> last, float weight)
         {
-            public Node<T> First { get; set; }
-            public Node<T> Last { get; set; }
-            public override int GetHashCode()
-            {
-                return First.GetHashCode() * Last.GetHashCode();
-            }
-            public Edge(Node<T> first, Node<T> last)
-            {
-                First = first;
-                Last = last;
-            }
+            First = first;
+            Last = last;
+            Weight = weight;
+        }
+    }
+    public class GraphNode<T>
+    {
+        public T Value { get; private set; }
+        public List<Edge<T>> Edges { get; private set; }
+
+        public List<GraphNode<T>> Neighbours => Edges.Select(x => x.Last).ToList();
+        public GraphNode(T value)
+        {
+            Value = value;
+            Edges = new();
+        }
+        public void AddEdge(Edge<T> edge)
+        {
+            Edges.Add(edge);
         }
     }
 }

@@ -1,74 +1,79 @@
-﻿namespace ComputerScience
+﻿using System.Collections.Generic;
+
+namespace ComputerScience
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            var graph = new Graph<int>();
-            var one = graph.AddNode(1);
-            var two = graph.AddNode(2);
-            var three = graph.AddNode(3);
-            graph.AddEdge(one, two);
-            graph.AddEdge(two, three);
-            graph.AddEdge(three, one);
+            var graph = new Graph<string>();
+            var a = graph.AddNode("A");
+            var b = graph.AddNode("B");
+            var c = graph.AddNode("C");
+            var d = graph.AddNode("D");
+            var e = graph.AddNode("E");
+            var f = graph.AddNode("F");
+            graph.AddEdgeTwoDirection(a, b, 7);
+            graph.AddEdgeTwoDirection(a, c, 9);
+            graph.AddEdgeTwoDirection(a, f, 14);
+            graph.AddEdgeTwoDirection(b, c, 1);
+            graph.AddEdgeTwoDirection(b, d, 15);
+            graph.AddEdgeTwoDirection(c, d, 11);
+            graph.AddEdgeTwoDirection(c, f, 2);
+            graph.AddEdgeTwoDirection(d, e, 6);
+            graph.AddEdgeTwoDirection(f, e, 9);
+
+
+            var path = Dijkstra(graph, e, b);
+            foreach (var node in path)
+            {
+                Console.WriteLine(node.Value);
+            }
 
         }
 
-        static int Fibonacci(int n)
+        public static List<GraphNode<T>> Dijkstra<T>(Graph<T> graph, GraphNode<T> start, GraphNode<T> Target)
         {
-            if (n == 1 || n == 2) return 1;
-            if (n == 3) return 2;
-            int less1 = 1;
-            int less2 = 1;
-            int current = 0;
-            for (int i = 0; i < n - 2; i++)
+            Dictionary<GraphNode<T>, float> weights = new();
+            Dictionary<GraphNode<T>, GraphNode<T>> previousNodes = new();
+            PriorityQueue<GraphNode<T>, float> ToVisit = new();
+            List<GraphNode<T>> visitedNodes = new();
+            foreach (var node in graph.Nodes)
             {
-                current = less1 + less2;
-                less1 = less2;
-                less2 = current;
+                weights.Add(node, float.MaxValue);
             }
-            return current;
+            weights[start] = 0;
+            ToVisit.Enqueue(start, 0);
+            while (ToVisit.Count > 0)
+            {
+                var currentNode = ToVisit.Dequeue();
+                if (currentNode == Target) break;
+                visitedNodes.Add(currentNode);
+                foreach (var edge in currentNode.Edges)
+                {
+                    var node = edge.Last;
+                    if (visitedNodes.Contains(node)) continue;
+                    float distance = edge.Weight + weights[currentNode];
+                    if (distance < weights[node])
+                    {
+                        ToVisit.Enqueue(node, distance);
+                        previousNodes[node] = currentNode;
+                        weights[node] = distance;
+                    }
+                }
+            }
+            List<GraphNode<T>> path = new();
+            var current = Target;
+            path.Add(Target);
+            while (current != start)
+            {
+                var temp = previousNodes[current];
+                path.Add(temp);
+                current = temp;
+            }
+            path.Reverse();
+            return path;
         }
 
-        static int[] MergeSort(int[] nums)
-        {
-            if (nums.Length == 0 || nums.Length == 1) return nums;
-            if (nums.Length == 2)
-            {
-                if (nums[0] <= nums[1]) return nums;
-                return new int[] { nums[1], nums[0] };
-            }
-            var leftHalf = MergeSort(nums[..(nums.Length / 2)]);
-            var rightHalf = MergeSort(nums[(nums.Length / 2)..]);
-            int indexInLeft = 0;
-            int indexInRight = 0;
-            int[] result = new int[nums.Length];
-            for (int i = 0; i < result.Length; i++)
-            {
-                if (indexInLeft >= leftHalf.Length)
-                {
-                    result[i] = rightHalf[indexInRight];
-                    indexInRight++;
-                    continue;
-                }
-                else if (indexInRight >= rightHalf.Length)
-                {
-                    result[i] = leftHalf[indexInLeft];
-                    indexInLeft++;
-                    continue;
-                }
-                if (leftHalf[indexInLeft] >= rightHalf[indexInRight])
-                {
-                    result[i] = rightHalf[indexInRight];
-                    indexInRight++;
-                }
-                else
-                {
-                    result[i] = leftHalf[indexInLeft];
-                    indexInLeft++;
-                }
-            }
-            return result;
-        }
     }
 }
