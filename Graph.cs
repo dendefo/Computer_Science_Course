@@ -8,20 +8,20 @@ namespace ComputerScience
 {
     public class Graph<T>
     {
-        public List<GraphNode<T>> Nodes { get; set; }
+        public Dictionary<T,GraphNode<T>> Nodes { get; set; }
         public HashSet<Edge<T>> Edges { get; set; }
 
 
         public Graph()
         {
             Edges = new HashSet<Edge<T>>();
-            Nodes = new List<GraphNode<T>>();
+            Nodes = new Dictionary<T, GraphNode<T>>();
         }
 
         public GraphNode<T> AddNode(T value)
         {
             var node = new GraphNode<T>(value);
-            Nodes.Add(node);
+            Nodes.Add(value,node);
             return node;
         }
 

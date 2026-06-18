@@ -6,30 +6,30 @@ namespace ComputerScience
     {
         static void Main(string[] args)
         {
-            var graph = new Graph<string>();
-            var a = graph.AddNode("A");
-            var b = graph.AddNode("B");
-            var c = graph.AddNode("C");
-            var d = graph.AddNode("D");
-            var e = graph.AddNode("E");
-            var f = graph.AddNode("F");
-            graph.AddEdgeTwoDirection(a, b, 7);
-            graph.AddEdgeTwoDirection(a, c, 9);
-            graph.AddEdgeTwoDirection(a, f, 14);
-            graph.AddEdgeTwoDirection(b, c, 1);
-            graph.AddEdgeTwoDirection(b, d, 15);
-            graph.AddEdgeTwoDirection(c, d, 11);
-            graph.AddEdgeTwoDirection(c, f, 2);
-            graph.AddEdgeTwoDirection(d, e, 6);
-            graph.AddEdgeTwoDirection(f, e, 9);
+            Console.WriteLine(NetworkDelayTime(null, 0, 0));
 
-
-            var path = Dijkstra(graph, e, b);
-            foreach (var node in path)
+        }
+        public static int NetworkDelayTime(int[][] times, int n, int k)
+        {
+            var graph = new Graph<int>();
+            foreach (var t in times)
             {
-                Console.WriteLine(node.Value);
+                GraphNode<int> startNode = null;
+                GraphNode<int> endNode = null;
+                int weight = t[2];
+                if (!graph.Nodes.TryGetValue(t[0], out startNode))
+                {
+                    startNode = graph.AddNode(t[0]);
+                }
+                if (!graph.Nodes.TryGetValue(t[1], out endNode))
+                {
+                    endNode = graph.AddNode(t[1]);
+                }
+                graph.AddEdgeOneDirection(startNode, endNode, weight);
             }
-
+            int longestPath = Dijkstra(graph, graph.Nodes[k]);
+            if (longestPath == int.MaxValue) return -1;
+            return longestPath;
         }
 
         public static List<GraphNode<T>> Dijkstra<T>(Graph<T> graph, GraphNode<T> start, GraphNode<T> Target)
@@ -38,7 +38,7 @@ namespace ComputerScience
             Dictionary<GraphNode<T>, GraphNode<T>> previousNodes = new();
             PriorityQueue<GraphNode<T>, float> ToVisit = new();
             List<GraphNode<T>> visitedNodes = new();
-            foreach (var node in graph.Nodes)
+            foreach (var node in graph.Nodes.Values)
             {
                 weights.Add(node, float.MaxValue);
             }
@@ -75,5 +75,37 @@ namespace ComputerScience
             return path;
         }
 
+        public static int Dijkstra<T>(Graph<T> graph, GraphNode<T> start)
+        {
+            Dictionary<GraphNode<T>, float> weights = new();
+            Dictionary<GraphNode<T>, GraphNode<T>> previousNodes = new();
+            PriorityQueue<GraphNode<T>, float> ToVisit = new();
+            List<GraphNode<T>> visitedNodes = new();
+            foreach (var node in graph.Nodes.Values)
+            {
+                weights.Add(node, float.MaxValue);
+            }
+            weights[start] = 0;
+            ToVisit.Enqueue(start, 0);
+            while (ToVisit.Count > 0)
+            {
+                var currentNode = ToVisit.Dequeue();
+                visitedNodes.Add(currentNode);
+                foreach (var edge in currentNode.Edges)
+                {
+                    var node = edge.Last;
+                    if (visitedNodes.Contains(node)) continue;
+                    float distance = edge.Weight + weights[currentNode];
+                    if (distance < weights[node])
+                    {
+                        ToVisit.Enqueue(node, distance);
+                        previousNodes[node] = currentNode;
+                        weights[node] = distance;
+                    }
+                }
+            }
+
+            return ((int)weights.Max(x => x.Value));
+        }
     }
 }
